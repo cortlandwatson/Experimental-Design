@@ -1,0 +1,105 @@
+---
+title: "Test1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(mosaic)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(CARS)
+library(pander)
+library(MASS)
+library(gplots)
+library(car)
+library(readr)
+BatteryLife <- read_csv("Exams/BatteryLife.csv")
+SurfaceFinish <- read_csv("Exams/SurfaceFinish.csv")
+```
+
+##Battery Life Analysis
+
+```{r, include=FALSE}
+BatteryLife$Material <- as.factor(BatteryLife$Material)
+AnovaBL <- aov(BatteryLife$FailureTime ~ BatteryLife$Material)
+```
+
+```{r}
+boxplot(BatteryLife$FailureTime ~ BatteryLife$Material)
+plotmeans(BatteryLife$FailureTime ~ BatteryLife$Material)
+pander(favstats(BatteryLife$FailureTime ~ BatteryLife$Material))
+```
+
+With these two graphics we are able to see that there appears to be a difference between the three groups of batteries and their life spans. This gives us reason to do our analysis, but does not necessarily tell us that anything is significant. 
+
+```{r}
+par(mfrow=c(1,2))
+plot(AnovaBL, which=1:2)
+```
+
+These two graphics allow us to see that it is appropriate to run the anova analysis. The residuals vs fitted graphic tells us that their seems to be some extra spread in the third group, but I would still say that we are ok to continue. The QQ-plot shows us that the data might also be a little off of what we would like to call normal. The center line does not cross directly through and it appears that the tails are coming off more than the rest of the data. Regardless, we are moving forward with the analysis. 
+
+```{r}
+pander(summary(AnovaBL))
+```
+
+This analysis tells us a lot about the data that we are looking at. The null hypothesis is that the means of the gorups are all the same and the alternative hypothesis is that at least of the groups is different. We obtained an F-test-statistic of 38.34. There are 14 degrees of freedom and two of them given to the anova and 12 to residuals. Our p-value is significant at 6.141e-06. Given our null hypothesis that the average mean of the groups is the same, we are able to make conclusions given the p-value obtained. We are able to reject the null hypothesis and say that at least of the group means is different than the others. Given this information and the graphics that we looked at first, I would conclude that we should not use battery #2. Further exploration could tell us more about which battery to use, but we would be able to make a move with the longer lasting battery #3 and maybe do further research on batteries 2 and 3 wxploring the other qualities. 
+
+## Surface Finish Analysis
+
+```{r, include=FALSE}
+SurfaceFinish$Feedrate <- as.factor(SurfaceFinish$Feedrate)
+SurfaceFinish$DepthofCut <- as.factor(SurfaceFinish$DepthofCut)
+AnovaSF <- aov(SurfaceFinish$SurfaceFinish ~ 
+                 SurfaceFinish$Feedrate*SurfaceFinish$DepthofCut)
+```
+
+```{r}
+boxplot(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$Feedrate, id.method="y")
+boxplot(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$DepthofCut, id.method="y")
+plotmeans(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$Feedrate, error.bars="se")
+plotmeans(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$DepthofCut, error.bars="se")
+interaction.plot(SurfaceFinish$Feedrate, SurfaceFinish$DepthofCut,
+                 SurfaceFinish$SurfaceFinish)
+interaction.plot(SurfaceFinish$DepthofCut, SurfaceFinish$Feedrate,
+                 SurfaceFinish$SurfaceFinish)
+pander(favstats(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$Feedrate))
+pander(favstats(SurfaceFinish$SurfaceFinish ~ SurfaceFinish$DepthofCut))
+```
+
+In the boxplots we are able to see that with increasing both the feed rate and the depth of cut, we see an increase in the surface finish. It appears that the means of the groups are different. 
+
+By looking at the means plots we are able to confirm that the two factors do indeed show that there is a difference in the means. 
+
+The interaction plots then show us that there is the likelihood of performing a transformation to make this data more workable. I will include that at the end of the analysis. 
+
+```{r}
+plot(AnovaSF, which=1:2)
+```
+
+When checking for normality and equal variance we see that the variance is somewhat acceptable. It still appears that there are some outliers, like 1, 17 and 18, but the overall spread, beside the first group seems to be somewhat equal. The normality though continues to fail out at the ends, which leads us to believe that the data may not be as normal as we would like. The analysis will continue.  
+
+```{r}
+pander(summary(AnovaSF))
+```
+
+This table allows us to see what we are looking for. Is there an interaction and what would be the best way to improve the finish. The feedrate and depthofcut have similar hypotheses. They are null=that all of the groups have the same means, and alternative=at least one of the means is different. The interaction however has a null hypothesis that an interaction does not exist and an alternative hypothesis that it does. The test statistics are as follows, feedrate=55.02, depthofcut=24.66, and the interaction=3.232. Feedrate has 2 DF, depthofcut has 3 and the interaction has six, this leaves the residuals with 24. All three aspects of the test yield significant results below our level of significance 0.05. This allows us to say that we reject all null hypotheses and that there is a difference in the means between the feedrate and depthofcut and that an interaction does exist. In conclusion, by running the feedrate at .3 and the depthofcut at .25 we would be able to maximize the surface finish. This is how we are able to make sense of statistics and solve realworld situations. 
+
+After trying to do several transformations, it appears that transformations do not yield significant results on the data analysis. 
+
+
+
+
+
+
+
+
+
+
+
+

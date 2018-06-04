@@ -1,0 +1,320 @@
+---
+title: "R code by Design"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r, eval=FALSE}
+library(package)
+library(mosaic)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(CARS)
+library(pander)
+library(MASS)
+library(gplots)
+library(car)
+install.package("package")
+```
+
+## BF[1] - Descriptive Statistics
+
+```{r, eval=FALSE}
+## need to install mosaic package for Rstudio
+favstats(ivdata$Particles~ivdata$Companies)
+par(mfrow=c(1,1))
+## need to install gplots package - means plot
+plotmeans(ivdata$Particles ~ ivdata$Companies, error.bars="se") 
+## Parallel Dot Graph
+par(mfrow=c(1,2))
+stripchart(Particles ~ Companies, vertical=TRUE, method="stack", ylab="Particles", pch = 1, data=ivdata)
+## Boxplots
+boxplot(Particles~Companies, data=ivdata, id.method="y")
+## Option 1 for doing QQ plots- must have Mosaic pkg installed
+par(mfrow=c(1,1))
+qqmath(~Particles|Companies,data=ivdata)
+## Option 2 for doing QQ plots
+par(mfrow=c(1,3))
+qqPlot(ivdata$Particles[ivdata$Companies == "Cutter"], dist="norm")
+qqPlot(ivdata$Particles[ivdata$Companies == "Abbot"], dist="norm")
+qqPlot(ivdata$Particles[ivdata$Companies == "McGaw"], dist="norm")
+
+## Option 1 for doing Histogram - must have Mosaic pkg installed
+par(mfrow=c(1,1))
+histogram(~Particles|Companies,data=ivdata)
+## Option 2 for doing Histograms
+## need to install gplots package
+par(mfrow=c(1,3))
+hist(ivdata$Particles[ivdata$Companies == "Cutter"], scale="frequency", breaks="Sturges", col="darkgray")
+hist(ivdata$Particles[ivdata$Companies == "Abbot"], scale="frequency", breaks="Sturges", col="darkgray")
+hist(ivdata$Particles[ivdata$Companies == "McGaw"], scale="frequency", breaks="Sturges", col="darkgray")
+
+ 
+```
+
+## BF[1] - Inferential Statistics
+
+```{r, eval=FALSE}
+womenpoet$type <- as.factor(womenpoet$type)
+AnovaModel.2 <- aov(age ~ type, data=Womenpoet)
+summary(AnovaModel.2)
+AnovaModel.1 <- aov(Particles ~ Companies, data=ivdata)
+summary(AnovaModel.1)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1, which=1:2)
+##option #2 Checking equal variance and normality - mosaic and car packages needed 
+favstats(ivdata$Particles~ivdata$Companies)
+par(mfrow=c(1,2))
+qqPlot(AnovaModel.1$residuals)
+hist(AnovaModel.1$residuals, dist="norm")
+
+## doing a transformation
+
+AnovaModel.1 <- aov(arctan(Particles) ~ Companies, data=ivdata)
+summary(AnovaModel.1)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1, which=1:2)
+##option #2 Checking equal variance and normality - mosaic and car packages needed
+par(mfrow=c(1,2))
+qqPlot(AnovaModel.2$residuals)
+hist(AnovaModel.2$residuals, dist="norm")
+## When checking for transformations
+favstats((ivdata$Particles)^(1/4)~ivdata$Companies)
+```
+
+
+## BF[1] - Multiple Comparisons
+
+```{r, eval=FALSE}
+## MULTIPLE COMPARISIONS
+## load and install agricolae package
+AnovaModel.1 <- aov(Particles ~ Companies, data=ivdata)
+summary(AnovaModel.1)
+
+## Rstudio with mosaic package
+favstats(ivdata$Particles~ivdata$Companies)  
+## Rstudio
+testwn <- scheffe.test(AnovaModel.1, "Companies", group = TRUE, console = TRUE)  
+
+#Fisher's LSD
+pairwise.t.test(ivdata$Particles, ivdata$Companies, "none")
+#Bonferroni
+pairwise.t.test(ivdata$Particles, ivdata$Companies, "bonferroni")
+#Tukeys
+TukeyHSD(AnovaModel.1, "Companies")
+## CONTRASTS
+meconium$groups  <- as.factor(meconium$groups)
+fit.lm1 <- lm(meconium ~ groups, data= meconium)
+summary(fit.lm1)
+contrasts(meconium$groups) <- cbind(c(.5,.5,-1), c(1,-1,0))
+contrasts(meconium$groups)
+fit.lm1 <- lm(meconium ~ groups, data= meconium)
+summary(fit.lm1)
+```
+
+
+## BF[2] - Descriptive Statistics
+
+```{r, eval=FALSE}
+#####Example from class
+pigout <- read_csv("Pig Out.csv")
+View(pigout)
+
+pigout$B12 <- as.factor(pigout$B12)
+pigout$Antibiotics <- as.factor(pigout$Antibiotics)
+
+## for Rstudio - Using Mosaic Package
+favstats(pigout$WeightGain~pigout$Antibiotics)  
+favstats(pigout$WeightGain~pigout$B12)
+
+
+par(mfrow=c(3,2))
+## Boxplot function is in car
+## boxplot function is in mosaic
+boxplot(WeightGain~B12, data=pigout, id.method="y")
+boxplot(WeightGain~Antibiotics, data=pigout, id.method="y")
+interaction.plot(pigout$B12,pigout$Antibiotics, pigout$WeightGain)
+interaction.plot(pigout$Antibiotics,pigout$B12, pigout$WeightGain)
+
+## need to install gplots package
+
+plotmeans(pigout$WeightGain~pigout$Antibiotics, error.bars="se") 
+plotmeans(pigout$WeightGain~pigout$B12, error.bars="se")
+```
+
+## BF[2] - Inferential Statistics
+
+```{r, eval=FALSE}
+pigout$Antibiotics <- as.factor(pigout$Antibiotics)
+pigout$B12 <- as.factor(pigout$B12)
+## Either group of Anova commands work for this
+
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1, which=1:2)
+##option #2 Checking equal variance and normality - mosaic and car packages needed
+leveneTest(AnovaModel.1, center=mean)
+par(mfrow=c(1,2))
+qqPlot(AnovaModel.1$residuals)
+hist(AnovaModel.1$residuals, dist="norm")
+
+## TRANSFORMATIONS
+## for Rstudio - Using Mosaic Package
+favstats(log(pigout$WeightGain)~pigout$Antibiotics)  
+
+## for Rstudio - Using Mosaic Package
+favstats(log(pigout$WeightGain)~pigout$B12)  
+
+AnovaModel.2 <- (lm(WeightGain ~ Antibiotics*B12, data=pig))
+Anova(AnovaModel.2)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.2, which=1:2)
+##option #2 Checking equal variance and normality - mosaic and car packages needed
+leveneTest(AnovaModel.2, center=mean)
+par(mfrow=c(1,2))
+qqPlot(AnovaModel.2$residuals)
+hist(AnovaModel.2$residuals, dist="norm")
+```
+
+
+## BF[2] - Type III Sum of Squares
+
+```{r, eval=FALSE}
+cancer326$gender <- as.factor(cancer326$gender)
+## This gives us Type I Sum of Squares in R
+AnovaModel.1 <- anova(lm(days ~ type*gender, data=cancer326))
+AnovaModel.1
+
+## This gives us Type III Sum of Squares in R
+## Need car package
+cancer.lm2 <- lm(days~gender*type, data=cancer326, contrasts=list(type=contr.sum, gender=contr.sum))
+Anova(cancer.lm2, type="III") 
+```
+
+
+## CB[1] - Descriptive Statistics
+
+```{r, eval=FALSE}
+## Use BF[1] Descriptive Statistics
+plotmeans(Fingertapping$fingertapping ~ Fingertapping$block, error.bars="se")
+```
+
+
+## CB[1] - Inferential Statistics
+
+```{r, eval=FALSE}
+AnovaModel.1 <- lm(sqrt(Fingertapping$fingertapping)~Fingertapping$block+Fingertapping$drug)
+Anova(AnovaModel.1)
+AnovaModel.1 <- lm(Fingertapping$fingertapping~Fingertapping$drug)
+Anova(AnovaModel.1)
+
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1,which=1:2)
+##option #2 Checking equal variance and normality
+par(mfrow=c(1,2))
+ leveneTest(Fingertapping$fingertapping,Fingertapping$drug, center = mean)
+qqPlot(AnovaModel.1$residuals)
+hist(AnovaModel.1$residuals)
+```
+
+
+## CB[2]/LS/ANCOVA
+
+```{r, eval=FALSE}
+## Latin Square Design
+AnovaModel.1 <- lm(milk$milkyield ~ milk$cow + milk$weeks + milk$treatments)
+Anova(AnovaModel.1)
+AnovaModel.1 <- lm(milk$milkyield ~ milk$treatments)
+Anova(AnovaModel.1)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1,which=1:2)
+##option #2 Checking equal variance and normality
+leveneTest(milk$milkyield, milk$treatments, center = mean)
+par(mfrow=c(1,2))
+qqPlot(AnovaModel.1$residuals)
+hist(AnovaModel.1$residuals)
+
+## This gives us Type III Sum of Squares in SPSS for ANCOVA
+## Need car package
+ancova.lm1 <- lm(score~confidenceratingmean*gender, data=confidence, contrasts=list(gender=contr.sum))
+Anova(ancova.lm1, type="III") 
+## Need car package
+ancova.lm2 <- lm(score~confidenceratingmean+gender, data=confidence, contrasts=list(gender=contr.sum))
+Anova(ancova.lm2, type="III")
+
+Anova(ancova.lm2, type="III")
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(AnovaModel.1,which=1:2)
+##option #2 Checking normality
+par(mfrow=c(1,2))
+hist(ancova.lm2$residuals)
+qqPlot(ancova.lm2$residuals)
+```
+
+
+## SP/RM[1,1] - Descriptive Statistics
+
+```{r, eval=FALSE}
+## Use BF[2] Descriptive Statistics
+```
+
+
+## SP/RM[1,1] - Inferential Statistics
+
+```{r, eval=FALSE}
+splitplot <- aov(log(diabetic$LacticAcid) ~ diabetic$Method + as.factor(diabetic$Dog) + diabetic$Method*diabetic$Operations)
+summary(splitplot)
+F=320/63.5
+1-pf(F,1,8)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(splitplot,which=1:2)
+##option #2 Checking equal variance and normality
+hist(splitplot$residuals)
+qqPlot(splitplot$residuals)
+leveneTest(splitplot, center=mean)
+```
+
+
+## Power
+
+```{r, eval=FALSE}
+power.anova.test(groups=5, between.var=var(c(0,0,0,0,10)),within.var=11.67^2, sig.level=0.05, power=0.869)
+power.anova.test(groups=5, between.var=var(c(0,0,0,0,10)),within.var=11.67^2, sig.level=0.05, n=25)
+
+x <- rep(NA,20)
+for (i in 2:20){
+  x[i] <- power.anova.test(groups=4, between.var=var(c(0,2,4,6)), within.var=4.7^2, sig.level=0.05, n=i)$power
+
+}
+x
+i
+n <- c(1:20)
+scatterplot(x~n,reg.line=FALSE, spread=FALSE, boxplots=FALSE)
+```
+
+## BF[3]
+```{r, eval=FALSE}
+Assembly$Sequence <- as.factor(Assembly$Sequence)
+
+AnovaModel.1 <- (lm(Times ~ Gender*Sequence*Experience, data=Assembly))
+Anova(AnovaModel.1)
+##option #1 Checking equal variance and normality
+par(mfrow=c(1,2))
+plot(splitplot,which=1:2)
+##option #2 Checking normality
+par(mfrow=c(1,2))
+hist(AnovaModel.1$residuals)
+qqPlot(AnovaModel.1$residuals)
+
+
+```
