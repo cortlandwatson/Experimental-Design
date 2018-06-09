@@ -99,8 +99,7 @@ summary(AnovaModel.1)
 ## Rstudio with mosaic package
 favstats(ivdata$Particles~ivdata$Companies)  
 ## Rstudio
-testwn <- scheffe.test(AnovaModel.1, "Companies", group = TRUE, console = TRUE)  
-
+testwn <- scheffe.test(AnovaModel.1, "Companies", group = TRUE, console = TRUE) 
 #Fisher's LSD
 pairwise.t.test(ivdata$Particles, ivdata$Companies, "none")
 #Bonferroni
