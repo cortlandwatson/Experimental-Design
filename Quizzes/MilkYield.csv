@@ -1,0 +1,10 @@
+Cow,Weeks,Treatments,MilkYield
+I,1-6,A,608
+I,7-12,B,716
+I,13-18,C,845
+II,1-6,B,885
+II,7-12,C,1086
+II,13-18,A,711
+III,1-6,C,940
+III,7-12,A,766
+III,13-18,B,832
