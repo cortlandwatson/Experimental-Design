@@ -1,0 +1,89 @@
+---
+title: "Final326"
+author: watsoncl 
+output: 
+  html_document:
+    keep_md: true
+    theme: flatly
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+
+
+### <a href="javascript:showhide('Problem1')">Problem 1 </a>
+
+<div id="Problem1" style="display:none;">
+
+
+
+<div style="padding-left:30px;">
+
+
+
+</div>
+
+</div>
+
+### <a href="javascript:showhide('Problem2')">Problem 2 </a>
+
+<div id="Problem2" style="display:none;">
+
+
+
+<div style="padding-left:30px;">
+
+
+
+</div>
+</div>
+
+### <a href="javascript:showhide('Problem 3')">Problem 3 </a>
+
+<div id="Problem 3" style="display:none;">
+
+
+
+<div style="padding-left:30px;">
+
+
+
+</div>
+</div>
+
+### <a href="javascript:showhide('Problem 4')">Problem 4 </a>
+
+<div id="Problem 4" style="display:none;">
+
+
+
+<div style="padding-left:30px;">
+
+
+
+</div>
+</div>
+
+
+### <a href="javascript:showhide('Problem 5')">Problem 5 </a>
+
+<div id="Problem 5" style="display:none;">
+
+
+
+<div style="padding-left:30px;">
+
+
+
+</div>
+</div>
+
+

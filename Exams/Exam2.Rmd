@@ -1,0 +1,78 @@
+---
+title: "Exam2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(mosaic)
+library(CARS)
+library(MASS)
+library(gplots)
+library(car)
+library(readr)
+library(readxl)
+library(pander)
+```
+
+```{r, include=FALSE}
+B <- read_csv("ActiveBattery.csv")
+B$Temp.Chamber <- as.factor(B$Temp.Chamber)
+N <- read_csv("NozzleDesign.csv")
+N$Nozzle <- as.factor(N$Nozzle)
+N$Velocity <- as.factor(N$Velocity)
+P <- read_csv("pigfeed.csv")
+P$Treatment <- as.factor(P$Treatment)
+B.aov <- aov(B$Activated.Lives ~ B$Temperature + B$Electrolyte + B$Temperature*B$Temp.Chamber)
+N.aov <- aov(N$Response ~ N$Velocity + N$Nozzle) 
+P.ancova2 <- lm(Final.Weight ~ Initial.Weight+Treatment, data=P, contrasts = list(Treatment=contr.sum))
+P.ancova <- lm(Final.Weight ~ Initial.Weight*Treatment, data=P, contrasts = list(Treatment=contr.sum))
+```
+
+##7
+
+```{r}
+pander(summary(B.aov))
+F=3.09/12.76
+1-pf(F,2,15)
+
+par(mfrow=c(1,2))
+plot(B.aov,which=1:2)
+F
+```
+
+
+##8
+
+```{r}
+pander(summary(N.aov))
+plot(N.aov,which=1:2)
+```
+
+##9
+
+```{r}
+
+pander(Anova(P.ancova, type = "III"))
+plot(P.ancova,which=1:2)
+
+pander(Anova(P.ancova2, type = "III"))
+plot(P.ancova2,which=1:2)
+```
+
+
+##10
+
+```{r}
+power.anova.test(groups=5, between.var = var(c(10,5,15,0,5)),within.var = 10^2,sig.level = 0.05, power = .80)
+power.anova.test(groups=5, between.var = var(c(10,5,15,0,5)),within.var = 10^2,sig.level = 0.05, n=20)
+
+```
+
+
+
+
+
+
+
+

@@ -48,7 +48,7 @@ qqPlot(splitplot$residuals)
 #### 4 
 x <- rep(NA,20)
 for (i in 2:20){
-  x[i] <- power.anova.test(groups=4, between.var=var(c(0,2,4,6)), within.var=4.7^2, sig.level=0.05, n=i)$power
+  x[i] <- power.anova.test(groups=4, between.var=var(c(0,0,0,6)), within.var=4.7^2, sig.level=0.05, n=i)$power
   
 }
 x
@@ -56,11 +56,15 @@ i
 n <- c(1:20)
 scatterplot(x~n, reg.line=FALSE, spread=FALSE, boxplots=FALSE)
 
+Injury <- read_csv("HW/headinjury.csv")
+View(Injury)
 
-###Project
-sample(1:2, 8, replace=TRUE)
 
 
+1-###Project
+sample(1:9, 9, replace=FALSE)
+power.anova.test(groups=9, between.var=var(c(0,0,0,0,0,0,0,0,12)),within.var=77, sig.level=0.05, power=.80)
+sqrt(77)
 
 
 

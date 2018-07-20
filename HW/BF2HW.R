@@ -70,16 +70,25 @@ pander(summary(ProgrammersAnova))
 par(mfrow=c(1,2))
 plot(ProgrammersAnova, which=1:2)
 
+#### 3 Enrichment
+Cancer <- read_csv("HW/Cancer.csv")
+View(Cancer)
 
+CancerAov <- anova(lm(Cancer$age ~ Cancer$type * Cancer$gender))
+CancerAov
+Cancer.lm <- lm(age ~ type * gender, data = Cancer,
+                contrasts = list(type=contr.sum, gender=contr.sum))
+Anova(Cancer.lm, type = "III")
 
+Singer <- read_csv("HW/singerheights.csv")
+View(Singer)
 
+SingerAov <- anova(lm(Singer$height ~ Singer$gender * Singer$part))
+SingerAov
 
-
-
-
-
-
-
+Cancer.lm <- lm(height ~ gender * part, data = Singer, 
+                contrasts = list(gender=contr.sum, part=contr.sum))
+Anova(Cancer.lm, type = "III")
 
 
 
